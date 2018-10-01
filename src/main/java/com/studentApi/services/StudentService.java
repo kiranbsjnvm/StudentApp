@@ -3,6 +3,8 @@ package com.studentApi.services;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import com.studentApi.models.Student;
@@ -14,31 +16,33 @@ public class StudentService {
 	@Autowired
 	private StudentRepository studentRepository;
 	
-	public List<Student> getAll(List<Integer> classes,String isActive,String afterYear,String beforeYear){
+	public List<Student> getAll(List<Integer> classes,String isActive,String afterYear,String beforeYear,int pageNumber,int pageSize){
+		
+		 Pageable pageRequest = new PageRequest(pageNumber,pageSize);
 		
 		if(classes.size() == 0 && isActive.isEmpty() && afterYear.isEmpty() && beforeYear.isEmpty()){
-			return (List<Student>) studentRepository.findAll();
+			return (List<Student>) studentRepository.findAll(pageRequest);
 		}
 		
 		else if(isActive.isEmpty() && afterYear.isEmpty() && beforeYear.isEmpty()){
-			return studentRepository.findByStudentClassIn(classes);
+			return studentRepository.findByStudentClassIn(classes,pageRequest);
 		}
 		
 		else if(afterYear.isEmpty() && beforeYear.isEmpty()){
 			boolean studentActive = Boolean.parseBoolean(isActive);  
-			return studentRepository.findByStudentClassInAndStudentActive(classes, studentActive);
+			return studentRepository.findByStudentClassInAndStudentActive(classes, studentActive,pageRequest);
 		}
 		
 		else if(classes.size() != 0 && !isActive.isEmpty() && !afterYear.isEmpty()){
 			boolean studentActive = Boolean.parseBoolean(isActive);
 			Long afterYear1 = Long.parseLong(afterYear);
-			return studentRepository.findByStudentClassInAndStudentActiveAndAdmissionYearGreaterThan(classes, studentActive,afterYear1);
+			return studentRepository.findByStudentClassInAndStudentActiveAndAdmissionYearGreaterThan(classes, studentActive,afterYear1,pageRequest);
 		}
 		
 		else if(classes.size() != 0 && !isActive.isEmpty() && !beforeYear.isEmpty()){
 			boolean studentActive = Boolean.parseBoolean(isActive);  
 			Long beforeYear1 = Long.parseLong(beforeYear);
-			return studentRepository.findByStudentClassInAndStudentActiveAndAdmissionYearLessThan(classes, studentActive,beforeYear1);
+			return studentRepository.findByStudentClassInAndStudentActiveAndAdmissionYearLessThan(classes, studentActive,beforeYear1,pageRequest);
 		}
 		
 		else{
@@ -82,4 +86,5 @@ public class StudentService {
 			studentRepository.save(student);
 		}
 	}
+	
 }

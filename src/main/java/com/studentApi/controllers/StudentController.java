@@ -27,9 +27,11 @@ public class StudentController {
 	public List<Student> getAll(@RequestParam(value="classes", defaultValue="") List<Integer> studClasses,
 								@RequestParam(value="active", defaultValue="") String isActive,
 								@RequestParam(value="admissionYearAfter", defaultValue="") String afterYear,
-								@RequestParam(value="admissionYearBefore", defaultValue="") String beforeYear){
+								@RequestParam(value="admissionYearBefore", defaultValue="") String beforeYear,
+								@RequestParam(value="pageNumber", defaultValue="0") int pageNumber,
+								@RequestParam(value="pageSize", defaultValue="20") int pageSize){
 		
-			return studentService.getAll(studClasses,isActive,afterYear,beforeYear);
+			return studentService.getAll(studClasses,isActive,afterYear,beforeYear,pageNumber,pageSize);
 		
 	}
 	
